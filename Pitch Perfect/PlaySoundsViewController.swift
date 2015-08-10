@@ -46,20 +46,19 @@ class PlaySoundsViewController: UIViewController {
     }
     
     func rateSounds(rate: Float) {
+        audioPlayer.stop()
+        audioEngine.stop()
+        audioEngine.reset()
         audioPlayer.rate = rate
         audioPlayer.currentTime = 0.0
+        audioPlayer.play()
     }
     @IBAction func snailSound(sender: UIButton) {
-        resetPlayer()
         rateSounds(0.5)
-        audioPlayer.play()
     }
     
-    
     @IBAction func rabbitSound(sender: UIButton) {
-        resetPlayer()
         rateSounds(1.5)
-        audioPlayer.play()
     }
     
     @IBAction func playChipmunkAudio(sender: UIButton) {
@@ -91,8 +90,7 @@ class PlaySoundsViewController: UIViewController {
     }
     
     @IBAction func playEcho(sender: UIButton) {
-        resetPlayer()
-        audioPlayer.play()
+        rateSounds(1.0)
         let delay:NSTimeInterval = 0.1//100ms
         var playtime:NSTimeInterval
         playtime = audioPlayer2.deviceCurrentTime + delay

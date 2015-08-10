@@ -17,6 +17,7 @@ class PlaySoundsViewController: UIViewController {
     var audioPlayer2:AVAudioPlayer!
     
     var audioEngine:AVAudioEngine!
+    var audioEngine2:AVAudioEngine!
     var audioFile:AVAudioFile!
 
     override func viewDidLoad() {
@@ -30,6 +31,7 @@ class PlaySoundsViewController: UIViewController {
         audioPlayer2.enableRate = true
         
         audioEngine = AVAudioEngine()
+        audioEngine2 = AVAudioEngine()
         audioFile = AVAudioFile(forReading: receivedAudio.filePathUrl, error: nil)
 
     }
@@ -93,6 +95,8 @@ class PlaySoundsViewController: UIViewController {
         var playtime:NSTimeInterval
         playtime = audioPlayer2.deviceCurrentTime + delay
         audioPlayer2.stop()
+        audioEngine2.stop()
+        audioEngine2.reset()
         audioPlayer2.currentTime = 0.0
         audioPlayer2.playAtTime(playtime)
     }

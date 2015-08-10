@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 
 class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
-    //Declared Globally
+
     var audioRecorder:AVAudioRecorder!
     var recordedAudio:RecordedAudio!
 
@@ -19,11 +19,13 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     @IBOutlet weak var recordingInProgress: UILabel!
 
     
+    @IBOutlet weak var resumeButton: UIButton!
+    @IBOutlet weak var pauseButton: UIButton!
     @IBOutlet weak var stopButton: UIButton!
     
-       override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+  
     }
 
     override func didReceiveMemoryWarning() {
@@ -31,32 +33,43 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func pauseRecording(sender: UIButton) {
+        audioRecorder.pause()
+        pauseButton.hidden = true
+        resumeButton.hidden = false
+        recordingInProgress.text = "Recording Paused"
+    }
+    
+    @IBAction func resumeRecording(sender: UIButton) {
+        audioRecorder.record()
+        pauseButton.hidden = false
+        resumeButton.hidden = true
+        recordingInProgress.text = "Recording in Progress"
+    }
+    
     override func viewWillAppear(animated: Bool) {
         //Hide the stop button
         recordingInProgress.text = "Tap to Record"
         recordingInProgress.hidden = false
         stopButton.hidden = true
+        pauseButton.hidden = true
+        resumeButton.hidden = true
         recordButton.enabled = true
     }
 
     @IBAction func recordAudio(sender: UIButton) {
-        //TODO: Show text "recording in progress"
+
         recordingInProgress.text = "Recording in Progress"
         recordingInProgress.hidden = false
         stopButton.hidden = false
+        pauseButton.hidden = false
         recordButton.enabled = false
-        //TODO: Record the user's voice
+
         println("in recordAudio")
-        
-        //Inside func recordAudio(sender: UIButton)
+
         let dirPath = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as! String
-        
-        //let currentDateTime = NSDate()
-        //let formatter = NSDateFormatter()
-        //formatter.dateFormat = "ddMMyyyy-HHmmss"
-        //let recordingName = formatter.stringFromDate(currentDateTime)+".wav"
-        
-        // Use this instead
+
+
         let recordingName = "my_audio.wav"
         let pathArray = [dirPath, recordingName]
         let filePath = NSURL.fileURLWithPathComponents(pathArray)
@@ -72,12 +85,9 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.record()
     }
     func audioRecorderDidFinishRecording(recorder: AVAudioRecorder!, successfully flag: Bool) {
-        //TODO: Step 1 - Save the recorded audio
         if (flag){
             recordedAudio = RecordedAudio(filePathUrl: recorder.url, title: recorder.url.lastPathComponent!)
-//            recordedAudio.filePathUrl = recorder.url
-//            recordedAudio.title = recorder.url.lastPathComponent
-            //TODO Step2 - Move to the next scene aka perform segue
+
             self.performSegueWithIdentifier("stopRecording", sender: recordedAudio)
         }else {
             println("Recording was not successful")
@@ -97,8 +107,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
  
 
     @IBAction func stopAudio(sender: UIButton) {
-        recordingInProgress.hidden = true
-        //Inside func stopAudio(sender: UIButton)
+
         audioRecorder.stop()
         var audioSession = AVAudioSession.sharedInstance()
         audioSession.setActive(false, error: nil)
